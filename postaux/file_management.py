@@ -5,16 +5,16 @@ from tkinter.filedialog import askdirectory
 import h5py
 
 
-def select_directory():
+def select_directory(initialdir=None):
     Tk().withdraw()
-    directory = Path(askdirectory(title="Select data directory"))
+    directory = Path(askdirectory(title="Select directory", initialdir=initialdir))
     print(f"Analyzing: {directory}")
     return directory
 
 
-def h5_tree(val, pre=''):
-    items = len(val)
-    for key, val in val.items():
+def h5_tree(vals, pre=''):
+    items = len(vals)
+    for key, val in vals.items():
         items -= 1
         if items == 0:
             # the last item

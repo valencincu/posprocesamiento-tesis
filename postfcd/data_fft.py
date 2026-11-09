@@ -1,16 +1,18 @@
-import numpy as np
-import h5py
 import os
-import scienceplots
-from uncertainties import ufloat
-from matplotlib import pyplot as plt
-from matplotlib import use as matplotlib_backend
 from pathlib import Path
-from scipy.signal import find_peaks, peak_widths
 from tkinter import Tk
 from tkinter.filedialog import askdirectory
+
+import h5py
+import numpy as np
+import scienceplots
+from matplotlib import pyplot as plt
+from matplotlib import use as matplotlib_backend
+from scipy.signal import find_peaks, peak_widths
+from uncertainties import ufloat
 from uncertainties import unumpy as unp
-import scipy.fft as fft
+
+from postaux.ffts import video_fft, video_ifft
 
 matplotlib_backend("TkAgg")
 plt.style.use('science')
@@ -20,22 +22,8 @@ ffts  = []
 freqs = []
 colors = plt.cm.hsv(np.linspace(0,1,8))
 
-def video_fft(frames, fps=1):
-    frames_fft = fft.rfft(frames, axis=0, norm='forward')
-    freqs = fft.rfftfreq(len(frames), 1/fps)
-    return freqs, frames_fft
-
-def video_ifft(freqs, frames_fft, freq_loc=None, sigmas=1):
-    if freq_loc is not None:
-        delta = (freqs[1] - freqs[0])*sigmas
-        frames_fft = frames_fft.copy()
-        frames_fft[np.abs(freqs - freq_loc) > delta,...] = 0
-
-    video_ifft = fft.irfft(frames_fft, axis=0)
-    return video_ifft
-
 # %% OPEN FILE
-Tk().withdraw() 
+Tk().withdraw()
 directory = Path(askdirectory(title="Select data directory"))
 print(f"Analyzing: {directory}")
 f = h5py.File(directory / 'height_maps.hdf5', 'r')
